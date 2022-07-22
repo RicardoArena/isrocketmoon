@@ -1,35 +1,27 @@
 const router = require("express").Router();
 const bcrypt = require("bcrypt");
 const JobsModel = require("../models/Jobs.model");
+const UserModel = require("../models/User.model");
 
 const generateToken = require("../config/jwt.config");
 const isAuth = require("../middlewares/isAuth");
 const attachCurrentUser = require("../middlewares/attachCurrentUser");
-const isAdmin = require("../middlewares/isAdmin");
 
 const saltRounds = 10;
 
-router.post("/signup", async (req, res) => {
+router.post("/createjob", isAuth, attachCurrentUser, async (req, res) => {
   try {
-    // Primeira coisa: Criptografar a senha!
-
-    const { password } = req.body;
-
-    if (!password) {
-      return res.status(400).json({
-        msg: "Password is required and must have at least 8 characters, uppercase and lowercase letters, numbers and special characters.",
-      });
-    }
-
-    const salt = await bcrypt.genSalt(saltRounds);
-    const passwordHash = await bcrypt.hash(password, salt);
+    const loggedInUser = req.currentUser;
 
     const createdJob = await JobsModel.create({
       ...req.body,
-      passwordHash: passwordHash,
+      owner: req.currentUser._id,
+      owner: loggedInUser._id,
     });
-
-    delete createdJob._doc.passwordHash;
+    await JobsModel.findOneAndUpdate(
+      { _id: loggedInUser._id },
+      { $push: { jobs: createdJob._id } }
+    );
 
     return res.status(201).json(createdJob);
   } catch (error) {
@@ -38,32 +30,30 @@ router.post("/signup", async (req, res) => {
   }
 });
 
-router.post("/login", async (req, res) => {
+router.get("/:jobsId", isAuth, attachCurrentUser, async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const loggedInUser = req.currentUser;
 
-    const job = await JobsModel.findOne({ email: email });
+    const { jobsId } = req.params;
 
-    if (!job) {
-      return res.status(400).json({ msg: "Wrong password or email." });
-    }
+    const foundJobs = await JobsModel.findOne({ _id: albumId });
 
-    if (await bcrypt.compare(password, job.passwordHash)) {
-      delete job_doc.passwordHash;
-      const token = generateToken(job);
+    const owner = await JobsModel.findOne({ _id: foundJobs.owner });
 
-      return res.status(200).json({
-        token: token,
-        job: { ...job._doc },
+    if (!owner.jobsRestrictions && !owner.friends.includes(loggedInUser._id)) {
+      return res.status(401).json({
+        message: "Os jobs desse usuário são restritos aos seus amigos.",
       });
-    } else {
-      return res.status(400).json({ msg: "Wrong password or email." });
     }
-  } catch (error) {
-    console.log(error);
-    return res.status(500).json(error);
+
+    return res.status(200).json(foundJobs);
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json(err);
   }
 });
+
+// PAREI AQUI
 
 router.get("/profile", isAuth, attachCurrentUser, (req, res) => {
   return res.status(200).json(req.currentUser);
