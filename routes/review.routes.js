@@ -28,3 +28,21 @@ router.post("/create-review", isAuth, attachCurrentUser, async (req, res) => {
     return res.status(500).json(error);
   }
 });
+
+// READ ALL
+
+router.get("/my-review", isAuth, attachCurrentUser, async (req, res) => {
+  try {
+    const loggedInUser = req.currentUser;
+
+    const userReview = await ReviewModel.find(
+      { owner: loggedInUser._id },
+      { reviews: 0 }
+    );
+
+    return res.status(200).json(userReview);
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json(err);
+  }
+});
