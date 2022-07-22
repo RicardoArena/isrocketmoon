@@ -6,7 +6,7 @@ const reviewSchema = new Schema({
   rate: { type: String, required: true },
   date: { type: Date, default: Date.now() },
 
-  job: [{ type: Types.ObjectId, ref: "Jobs" }],
+  job: { type: Types.ObjectId, ref: "Jobs" },
 });
 
 const ReviewModel = model("Review", reviewSchema);

@@ -1,7 +1,7 @@
-const { Schema, model, default: mongoose } = require("mongoose");
+const { Schema, model, default: mongoose, Types } = require("mongoose");
 
 const JobsSchema = new Schema({
-  ownership: { type: String, required: true, trim: true },
+  owner: { type: Types.ObjectId, ref: "User" },
   title: { type: String, required: true, trim: true, maxLength: 32 },
   description: { type: String, required: true, maxLength: 256 },
   amount: { type: Number, required: true },
@@ -23,6 +23,8 @@ const JobsSchema = new Schema({
     enum: ["Launching", "Processing", "Landed"],
     default: "Launching",
   },
+
+  reviews: [{ type: Types.ObjectId, ref: "Review" }],
 });
 
 const JobsModel = model("Jobs", JobsSchema);
