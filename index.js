@@ -16,6 +16,9 @@ app.use("/user", userRouter);
 const jobsRouter = require("./routes/jobs.routes");
 app.use("/jobs", jobsRouter);
 
+const reviewPageRouter = require("./routes/reviewpage.routes");
+app.use("/review-page", reviewPageRouter);
+
 app.listen(Number(process.env.PORT), () => {
   console.log("Server up at port: ", process.env.PORT);
 });

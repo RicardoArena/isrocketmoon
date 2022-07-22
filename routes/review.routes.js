@@ -1,10 +1,9 @@
 const router = require("express").Router();
-const User = require();
-
 const ReviewModel = require("../models/Review.model");
 
 const isAuth = require("../middlewares/isAuth");
 const attachCurrentUser = require("../middlewares/attachCurrentUser");
+const JobsModel = require("../models/Jobs.model");
 
 // CREATE
 
