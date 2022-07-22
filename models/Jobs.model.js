@@ -27,4 +27,4 @@ const JobsSchema = new Schema({
 
 const JobsModel = model("Jobs", JobsSchema);
 
-module.exports = UserModel;
+module.exports = JobsModel;
