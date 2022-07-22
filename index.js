@@ -16,6 +16,9 @@ app.use("/user", userRouter);
 const jobsRouter = require("./routes/jobs.routes");
 app.use("/jobs", jobsRouter);
 
+const reviewRouter = require("./routes/review.routes");
+app.use("/review", reviewRouter);
+
 const reviewPageRouter = require("./routes/reviewpage.routes");
 app.use("/review-page", reviewPageRouter);
 
