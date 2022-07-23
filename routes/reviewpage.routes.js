@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const User = require("./user.routes");
+const User = require("../models/User.model");
 
 const ReviewPage = require("../models/ReviewPage.model");
 
@@ -16,14 +16,16 @@ router.post(
     try {
       const loggedInUser = req.currentUser;
 
+      //   const { idUser } = req.params;
       const createdReview = await ReviewPage.create({
         ...req.body,
         owner: loggedInUser._id,
+        owner: req.currentUser._id,
       });
 
       await User.findOneAndUpdate(
         { _id: loggedInUser._id },
-        { $push: { review: createdReview._id } }
+        { $push: { reviewpage: createdReview._id } }
       );
 
       return res.status(201).json(createdReview);
