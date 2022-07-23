@@ -2,6 +2,7 @@ const router = require("express").Router();
 const bcrypt = require("bcrypt");
 const JobsModel = require("../models/Jobs.model");
 const UserModel = require("../models/User.model");
+const ReviewModel = require("../models/Review.model");
 
 const generateToken = require("../config/jwt.config");
 const isAuth = require("../middlewares/isAuth");
@@ -93,23 +94,42 @@ router.patch("/edit/:jobsId", isAuth, attachCurrentUser, async (req, res) => {
 //SOFT DELETE
 
 router.delete(
-  "/disable-profile",
+  "/delete/:jobsId",
   isAuth,
   attachCurrentUser,
   async (req, res) => {
     try {
-      const disabledJob = await JobsModel.findOneAndUpdate(
-        { _id: req.currentUser._id },
-        { isActive: false, disabledOn: Date.now() },
-        { runValidators: true, new: true }
+      const { jobsId } = req.params;
+      const loggedInUser = req.currentUser;
+
+      const job = await JobsModel.findOne({ _id: jobsId });
+
+      // if (job.owner !== loggedInUser._id) {
+      //   return res
+      //     .status(401)
+      //     .json({ message: "Você não pode deletar esse album." });
+      // }
+
+      const deletedJob = await JobsModel.deleteOne({
+        _id: req.params.jobsId,
+      });
+
+      await ReviewModel.updateMany(
+        { jobs: jobsId },
+        { $pull: { jobs: jobsId } }
       );
 
-      delete disabledJob._doc.passwordHash;
+      await UserModel.findOneAndUpdate(
+        { _id: loggedInUser._id },
+        { $pull: { jobs: jobsId } },
+        { runValidators: true }
+      );
 
-      return res.status(200).json(disabledJob);
-    } catch (error) {
-      console.log(error);
-      return res.status(500).json(error);
+      return res.status(200).json(deletedJob);
+    } catch (err) {
+      console.log(err);
+
+      return res.status(500).json(err);
     }
   }
 );
