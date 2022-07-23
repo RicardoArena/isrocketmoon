@@ -1,12 +1,11 @@
 const { Schema, model, Types } = require("mongoose");
 
 const reviewSchema = new Schema({
-  title: { type: String, required: true, trim: true },
+  name: { type: Types.ObjectId, ref: "User" },
+  nickName: { type: Types.ObjectId, ref: "User" },
   description: { type: String, required: true },
-  rate: { type: String, required: true },
-  date: { type: Date, default: Date.now() },
 
-  name: [{ type: Types.ObjectId, ref: "User" }],
+  //   img: { type: Types.ObjectId, ref: "User" },
 });
 
 const ReviewPage = model("ReviewPage", reviewSchema);
