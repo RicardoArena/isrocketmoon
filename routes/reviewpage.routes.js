@@ -1,7 +1,7 @@
 const router = require("express").Router();
 const User = require("../models/User.model");
 
-const ReviewPage = require("../models/ReviewPage.model");
+const ReviewModel = require("../models/ReviewPage.model");
 
 const isAuth = require("../middlewares/isAuth");
 const attachCurrentUser = require("../middlewares/attachCurrentUser");
@@ -17,10 +17,10 @@ router.post(
       const loggedInUser = req.currentUser;
 
       //   const { idUser } = req.params;
-      const createdReview = await ReviewPage.create({
+      const createdReview = await ReviewModel.create({
         ...req.body,
-        owner: loggedInUser._id,
         owner: req.currentUser._id,
+        owner: loggedInUser._id,
       });
 
       await User.findOneAndUpdate(
