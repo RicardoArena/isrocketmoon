@@ -48,19 +48,11 @@ router.get("/myjobs", isAuth, attachCurrentUser, async (req, res) => {
 
 router.get("/:jobsId", isAuth, attachCurrentUser, async (req, res) => {
   try {
-    const loggedInUser = req.currentUser;
+    // const loggedInUser = req.currentUser;
 
     const { jobsId } = req.params;
 
     const foundJobs = await JobsModel.findOne({ _id: jobsId });
-
-    const owner = await JobsModel.findOne({ _id: foundJobs.owner });
-
-    if (!owner.jobsRestrictions && !owner.friends.includes(loggedInUser._id)) {
-      return res.status(401).json({
-        message: "Os jobs desse usuário são restritos aos seus amigos.",
-      });
-    }
 
     return res.status(200).json(foundJobs);
   } catch (err) {
@@ -68,8 +60,6 @@ router.get("/:jobsId", isAuth, attachCurrentUser, async (req, res) => {
     return res.status(500).json(err);
   }
 });
-
-// PAREI AQUI
 
 router.get("/profile", isAuth, attachCurrentUser, (req, res) => {
   return res.status(200).json(req.currentUser);
