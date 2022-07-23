@@ -36,7 +36,7 @@ router.get("/:jobsId", isAuth, attachCurrentUser, async (req, res) => {
 
     const { jobsId } = req.params;
 
-    const foundJobs = await JobsModel.findOne({ _id: albumId });
+    const foundJobs = await JobsModel.findOne({ _id: jobsId });
 
     const owner = await JobsModel.findOne({ _id: foundJobs.owner });
 
