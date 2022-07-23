@@ -9,6 +9,6 @@ const reviewSchema = new Schema({
   name: [{ type: Types.ObjectId, ref: "User" }],
 });
 
-const ReviewModel = model("Review", reviewSchema);
+const ReviewPage = model("ReviewPage", reviewSchema);
 
-module.exports = ReviewModel;
+module.exports = ReviewPage;
