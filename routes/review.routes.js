@@ -50,10 +50,10 @@ router.get("/my-review", isAuth, attachCurrentUser, async (req, res) => {
 
 // READ - DETAILS
 
-router.get("/:idJob", async (req, res) => {
+router.get("/:idReview", async (req, res) => {
   try {
-    const { idJob } = req.params;
-    const foundedJob = await JobsModel.findOne({ _id: idJob }).populate(
+    const { idReview } = req.params;
+    const foundedJob = await JobsModel.findOne({ _id: idReview }).populate(
       "review"
     );
 
@@ -66,16 +66,16 @@ router.get("/:idJob", async (req, res) => {
 
 // EDIT
 
-router.patch("/edit/:idJob", async (req, res) => {
+router.patch("/edit/:idReview", async (req, res) => {
   try {
-    const { idJob } = req.params;
+    const { idReview } = req.params;
 
     const body = { ...req.body };
 
     delete body.date;
 
     const updatedReview = await ReviewModel.findOneAndUpdate(
-      { _id: idJob },
+      { _id: idReview },
       { ...body },
       { new: true, runValidators: true }
     );
@@ -90,17 +90,17 @@ router.patch("/edit/:idJob", async (req, res) => {
 
 // DELETE
 
-router.delete("/delete/:idJob", async (req, res) => {
+router.delete("/delete/:idReview", async (req, res) => {
   try {
-    const { idJob } = req.params;
+    const { idReview } = req.params;
     const deletedReview = await ReviewModel.deleteOne({
-      _id: req.params.idJob,
+      _id: idReview,
     });
 
-    const jobs = await JobsModel.updateMany(
-      { _id: idJob },
-      { $pull: { review: createdReview._id } }
-    );
+    // const jobs = await JobsModel.updateMany(
+    //   { _id: idReview }
+    //   // { $pull: { review: deletedReview._id } }
+    // );
 
     return res.status(200).json(deletedReview);
   } catch (err) {
