@@ -61,26 +61,32 @@ router.get("/:jobsId", isAuth, attachCurrentUser, async (req, res) => {
   }
 });
 
-router.get("/profile", isAuth, attachCurrentUser, (req, res) => {
-  return res.status(200).json(req.currentUser);
-});
-
-router.patch("/update-profile", isAuth, attachCurrentUser, async (req, res) => {
+router.patch("/edit/:jobsId", isAuth, attachCurrentUser, async (req, res) => {
   try {
     const loggedInUser = req.currentUser;
 
-    const updatedJob = await JobsModel.findOneAndUpdate(
-      { _id: loggedInUser._id },
-      { ...req.body },
-      { runValidators: true, new: true }
+    const { jobsId } = req.params;
+
+    const body = { ...req.body };
+
+    // const jobs = await JobsModel.findOne({ _id: jobsId });
+
+    // if (jobs.owner !== loggedInUser._id) {
+    //   return res
+    //     .status(401)
+    //     .json({ message: "Você não pode alterar esse job!" });
+    // }
+
+    const updateJob = await JobsModel.findOneAndUpdate(
+      { _id: jobsId },
+      { ...body },
+      { new: true, runValidators: true }
     );
 
-    delete updatedJob._doc.passwordHash;
-
-    return res.status(200).json(updatedJob);
-  } catch (error) {
-    console.log(error);
-    return res.status(500).json(error);
+    return res.status(200).json(updateJob);
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json(err);
   }
 });
 
