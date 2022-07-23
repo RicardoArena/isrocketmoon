@@ -30,6 +30,22 @@ router.post("/createjob", isAuth, attachCurrentUser, async (req, res) => {
   }
 });
 
+router.get("/myjobs", isAuth, attachCurrentUser, async (req, res) => {
+  try {
+    const loggedInUser = req.currentUser;
+
+    const userJobs = await JobsModel.find(
+      { owner: loggedInUser._id },
+      { reviews: 0 }
+    );
+
+    return res.status(200).json(userJobs);
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json(err);
+  }
+});
+
 router.get("/:jobsId", isAuth, attachCurrentUser, async (req, res) => {
   try {
     const loggedInUser = req.currentUser;
