@@ -6,6 +6,7 @@ const generateToken = require("../config/jwt.config");
 const isAuth = require("../middlewares/isAuth");
 const attachCurrentUser = require("../middlewares/attachCurrentUser");
 const isAdmin = require("../middlewares/isAdmin");
+const JobsModel = require("../models/Jobs.model");
 
 const saltRounds = 10;
 
@@ -51,7 +52,10 @@ router.post("/login", async (req, res) => {
     if (await bcrypt.compare(password, user.passwordHash)) {
       delete user._doc.passwordHash;
       const token = generateToken(user);
-
+      const pilotJobs = await JobsModel.find({ pilot: user._id });
+      user.jobs = pilotJobs;
+      const createdJobs = await JobsModel.find({ owner: user._id });
+      user.createdJobs = createdJobs;
       return res.status(200).json({
         token: token,
         user: { ...user._doc },
@@ -69,8 +73,12 @@ router.get("/profile", isAuth, attachCurrentUser, async (req, res) => {
   const loggedInUser = req.currentUser;
   const user = await UserModel.findById(loggedInUser._id)
     .populate("testominals")
-    .populate("reviews")
-    .populate("jobs");
+    .populate("reviews");
+
+  const pilotJobs = await JobsModel.find({ pilot: user._id });
+  user.jobs = pilotJobs;
+  const createdJobs = await JobsModel.find({ owner: user._id });
+  user.createdJobs = createdJobs;
   return res.status(200).json(user);
 });
 
