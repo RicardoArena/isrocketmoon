@@ -16,7 +16,13 @@ router.post(
       const loggedInUser = req.currentUser;
 
       const { idJob } = req.params;
-
+      console.log(idJob);
+      const currentJob = await JobsModel.findById(idJob);
+      if (currentJob.owner != loggedInUser._id) {
+        return res.status(409).json("Ação Indisponível para o Perfil.");
+      }
+      console.log(currentJob);
+      console.log(loggedInUser);
       const createdReview = await ReviewModel.create({
         ...req.body,
         owner: loggedInUser._id,

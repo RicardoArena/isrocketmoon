@@ -24,6 +24,7 @@ const userSchema = new Schema({
   testominals: [{ type: Types.ObjectId, ref: "ReviewPage" }],
   reviews: [{ type: Types.ObjectId, ref: "Review" }],
   jobs: [{ type: Types.ObjectId, ref: "Jobs" }],
+  createdJobs: [{ type: Types.ObjectId, ref: "Jobs" }],
 });
 
 const UserModel = model("User", userSchema);
