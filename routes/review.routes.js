@@ -53,10 +53,8 @@ router.get("/my-review", isAuth, attachCurrentUser, async (req, res) => {
 router.get("/:idReview", async (req, res) => {
   try {
     const { idReview } = req.params;
-    const foundedJob = await JobsModel.findOne({ _id: idReview }).populate(
-      "review"
-    );
-
+    const foundedJob = await ReviewModel.findOne({ _id: idReview });
+    console.log(foundedJob);
     return res.status(200).json(foundedJob);
   } catch (err) {
     console.log(err);
