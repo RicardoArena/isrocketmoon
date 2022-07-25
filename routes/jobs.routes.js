@@ -19,7 +19,7 @@ router.post("/createjob", isAuth, attachCurrentUser, async (req, res) => {
       owner: req.currentUser._id,
       owner: loggedInUser._id,
     });
-    await JobsModel.findOneAndUpdate(
+    await UserModel.findOneAndUpdate(
       { _id: loggedInUser._id },
       { $push: { jobs: createdJob._id } }
     );
@@ -102,7 +102,7 @@ router.delete(
       const { jobsId } = req.params;
       const loggedInUser = req.currentUser;
 
-      const job = await JobsModel.findOne({ _id: jobsId });
+      // const job = await JobsModel.findOne({ _id: jobsId });
 
       // if (job.owner !== loggedInUser._id) {
       //   return res
@@ -114,15 +114,15 @@ router.delete(
         _id: req.params.jobsId,
       });
 
-      await ReviewModel.updateMany(
-        { jobs: jobsId },
-        { $pull: { jobs: jobsId } }
-      );
+      // await ReviewModel.updateMany(
+      //   { jobs: jobsId },
+      //   { $pull: { jobs: jobsId } }
+      // );
 
       await UserModel.findOneAndUpdate(
         { _id: loggedInUser._id },
-        { $pull: { jobs: jobsId } },
-        { runValidators: true }
+        { $pull: { jobs: deletedJob._id } },
+        { runValidators: true, new: true }
       );
 
       return res.status(200).json(deletedJob);

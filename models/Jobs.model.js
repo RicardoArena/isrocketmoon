@@ -10,7 +10,7 @@ const JobsSchema = new Schema({
     enum: ["Dolar"],
     required: true,
   },
-  requester: { type: String, required: true },
+
   game: {
     type: String,
     enum: ["League of Legends", "Counter Strike", "Dota 2", "Tibia"],

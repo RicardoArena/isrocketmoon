@@ -45,7 +45,7 @@ router.post("/login", async (req, res) => {
     const user = await UserModel.findOne({ email: email });
     console.log(user);
     if (!user) {
-      return res.status(400).json({ msg: "TESTE" });
+      return res.status(400).json({ msg: "This profile is not exist" });
     }
 
     if (await bcrypt.compare(password, user.passwordHash)) {
@@ -65,8 +65,13 @@ router.post("/login", async (req, res) => {
   }
 });
 
-router.get("/profile", isAuth, attachCurrentUser, (req, res) => {
-  return res.status(200).json(req.currentUser);
+router.get("/profile", isAuth, attachCurrentUser, async (req, res) => {
+  const loggedInUser = req.currentUser;
+  const user = await UserModel.findById(loggedInUser._id)
+    .populate("testominals")
+    .populate("reviews")
+    .populate("jobs");
+  return res.status(200).json(user);
 });
 
 router.patch("/update-profile", isAuth, attachCurrentUser, async (req, res) => {
