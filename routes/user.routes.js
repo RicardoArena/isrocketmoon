@@ -43,9 +43,9 @@ router.post("/login", async (req, res) => {
     const { email, password } = req.body;
 
     const user = await UserModel.findOne({ email: email });
-
+    console.log(user);
     if (!user) {
-      return res.status(400).json({ msg: "Wrong password or email." });
+      return res.status(400).json({ msg: "TESTE" });
     }
 
     if (await bcrypt.compare(password, user.passwordHash)) {
