@@ -25,7 +25,7 @@ router.post(
 
       await User.findOneAndUpdate(
         { _id: loggedInUser._id },
-        { $push: { reviewpage: createdReview._id } }
+        { $push: { testominals: createdReview._id } }
       );
 
       return res.status(201).json(createdReview);
@@ -123,16 +123,11 @@ router.delete(
         _id: req.params.reviewId,
       });
 
-      // await ReviewModel.updateMany(
-      //   { jobs: jobsId },
-      //   { $pull: { jobs: jobsId } }
-      // );
-
-      // await UserModel.findOneAndUpdate(
-      //   { _id: loggedInUser._id },
-      //   { $pull: { jobs: jobsId } },
-      //   { runValidators: true }
-      // );
+      await UserModel.findOneAndUpdate(
+        { _id: loggedInUser._id },
+        { $pull: { testominals: deletedReviewPage._id } },
+        { runValidators: true, new: true }
+      );
 
       return res.status(200).json(reviewPage);
     } catch (err) {
