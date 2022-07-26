@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const User = require("../models/User.model");
+const UserModel = require("../models/User.model");
 
 const ReviewModel = require("../models/ReviewPage.model");
 
@@ -23,9 +23,9 @@ router.post(
         owner: loggedInUser._id,
       });
 
-      await User.findOneAndUpdate(
+      await UserModel.findOneAndUpdate(
         { _id: loggedInUser._id },
-        { $push: { testominals: createdReview._id } }
+        { $push: { testimonials: createdReview._id } }
       );
 
       return res.status(201).json(createdReview);
@@ -111,7 +111,7 @@ router.delete(
       const { reviewId } = req.params;
       const loggedInUser = req.currentUser;
 
-      const reviewPage = await ReviewModel.findOne({ _id: reviewId });
+      // const reviewPage = await ReviewModel.findOne({ _id: reviewId });
 
       // if (job.owner !== loggedInUser._id) {
       //   return res
@@ -119,17 +119,17 @@ router.delete(
       //     .json({ message: "Você não pode deletar esse album." });
       // }
 
-      const deletedReviewPage = await ReviewModel.deleteOne({
-        _id: req.params.reviewId,
-      });
-
       await UserModel.findOneAndUpdate(
         { _id: loggedInUser._id },
-        { $pull: { testominals: deletedReviewPage._id } },
+        { $pull: { testimonials: reviewId } },
         { runValidators: true, new: true }
       );
 
-      return res.status(200).json(reviewPage);
+      const deletedReviewPage = await ReviewModel.deleteOne({
+        _id: reviewId,
+      });
+
+      return res.status(200).json(deletedReviewPage);
     } catch (err) {
       console.log(err);
 

@@ -71,8 +71,8 @@ router.post("/login", async (req, res) => {
 
 router.get("/profile", isAuth, attachCurrentUser, async (req, res) => {
   const loggedInUser = req.currentUser;
-  const user = await UserModel.findById(loggedInUser._id)
-    .populate("testominals")
+  const user = await UserModel.find(loggedInUser._id)
+    .populate("testimonials")
     .populate("reviews");
 
   const pilotJobs = await JobsModel.find({ pilot: user._id });

@@ -21,8 +21,8 @@ const userSchema = new Schema({
   isActive: { type: Boolean, default: true },
   disabledOn: { type: Date },
   typeOfUser: { type: String, enum: ["Pilot", "Owner"], required: true },
-  testominals: [{ type: Types.ObjectId, ref: "ReviewPage" }],
-  reviews: [{ type: Types.ObjectId, ref: "Review" }],
+  testimonials: [{ type: Types.ObjectId, ref: "ReviewPage" }],
+
   jobs: [{ type: Types.ObjectId, ref: "Jobs" }],
   createdJobs: [{ type: Types.ObjectId, ref: "Jobs" }],
 });
