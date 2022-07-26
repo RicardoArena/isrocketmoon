@@ -114,16 +114,16 @@ router.delete(
         _id: req.params.jobsId,
       });
 
-      await ReviewModel.updateMany(
-        { jobs: jobsId },
-        { $pull: { jobs: jobsId } }
-      );
+      // await ReviewModel.updateMany(
+      //   { jobs: jobsId },
+      //   { $pull: { jobs: jobsId } }
+      // );
 
-      await UserModel.findOneAndUpdate(
-        { _id: loggedInUser._id },
-        { $pull: { jobs: jobsId } },
-        { runValidators: true }
-      );
+      // await UserModel.findOneAndUpdate(
+      //   { _id: loggedInUser._id },
+      //   { $pull: { jobs: jobsId } },
+      //   { runValidators: true }
+      // );
 
       return res.status(200).json(deletedJob);
     } catch (err) {
