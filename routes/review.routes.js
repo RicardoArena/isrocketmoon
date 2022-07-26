@@ -16,7 +16,13 @@ router.post(
       const loggedInUser = req.currentUser;
 
       const { idJob } = req.params;
-
+      console.log(idJob);
+      const currentJob = await JobsModel.findById(idJob);
+      if (currentJob.owner != loggedInUser._id) {
+        return res.status(409).json("Ação Indisponível para o Perfil.");
+      }
+      console.log(currentJob);
+      console.log(loggedInUser);
       const createdReview = await ReviewModel.create({
         ...req.body,
         owner: loggedInUser._id,
@@ -95,10 +101,10 @@ router.delete("/delete/:idReview", async (req, res) => {
       _id: idReview,
     });
 
-    // const jobs = await JobsModel.updateMany(
-    //   { _id: idReview }
-    //   // { $pull: { review: deletedReview._id } }
-    // );
+    const jobs = await JobsModel.findOneAndUpdate(
+      { _id: deletedReview.job },
+      { $pull: { review: deletedReview._id } }
+    );
 
     return res.status(200).json(deletedReview);
   } catch (err) {

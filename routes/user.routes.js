@@ -6,6 +6,7 @@ const generateToken = require("../config/jwt.config");
 const isAuth = require("../middlewares/isAuth");
 const attachCurrentUser = require("../middlewares/attachCurrentUser");
 const isAdmin = require("../middlewares/isAdmin");
+const JobsModel = require("../models/Jobs.model");
 
 const saltRounds = 10;
 
@@ -45,13 +46,16 @@ router.post("/login", async (req, res) => {
     const user = await UserModel.findOne({ email: email });
     console.log(user);
     if (!user) {
-      return res.status(400).json({ msg: "TESTE" });
+      return res.status(400).json({ msg: "This profile is not exist" });
     }
 
     if (await bcrypt.compare(password, user.passwordHash)) {
       delete user._doc.passwordHash;
       const token = generateToken(user);
-
+      const pilotJobs = await JobsModel.find({ pilot: user._id });
+      user.jobs = pilotJobs;
+      const createdJobs = await JobsModel.find({ owner: user._id });
+      user.createdJobs = createdJobs;
       return res.status(200).json({
         token: token,
         user: { ...user._doc },
@@ -65,8 +69,17 @@ router.post("/login", async (req, res) => {
   }
 });
 
-router.get("/profile", isAuth, attachCurrentUser, (req, res) => {
-  return res.status(200).json(req.currentUser);
+router.get("/profile", isAuth, attachCurrentUser, async (req, res) => {
+  const loggedInUser = req.currentUser;
+  const user = await UserModel.findById(loggedInUser._id)
+    .populate("testominals")
+    .populate("reviews");
+
+  const pilotJobs = await JobsModel.find({ pilot: user._id });
+  user.jobs = pilotJobs;
+  const createdJobs = await JobsModel.find({ owner: user._id });
+  user.createdJobs = createdJobs;
+  return res.status(200).json(user);
 });
 
 router.patch("/update-profile", isAuth, attachCurrentUser, async (req, res) => {

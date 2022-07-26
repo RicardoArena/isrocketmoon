@@ -11,18 +11,20 @@ const userSchema = new Schema({
     match: /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
   },
   description: { type: String },
-  // location: {
-  //   type: String,
-  //   enum: ["North America", "South America", "Europe", "Oceania", "Asia"],
-  // },
+  location: {
+    type: String,
+    enum: ["North America", "South America", "Europe", "Oceania", "Asia"],
+  },
   passwordHash: { type: String, required: true },
   img: { type: String },
   role: { type: String, enum: ["ADMIN", "USER"], default: "USER" },
   isActive: { type: Boolean, default: true },
   disabledOn: { type: Date },
-  // typeOfUser: { type: String, enum: ["Pilot", "Owner"], required: true },
+  typeOfUser: { type: String, enum: ["Pilot", "Owner"], required: true },
   testominals: [{ type: Types.ObjectId, ref: "ReviewPage" }],
   reviews: [{ type: Types.ObjectId, ref: "Review" }],
+  jobs: [{ type: Types.ObjectId, ref: "Jobs" }],
+  createdJobs: [{ type: Types.ObjectId, ref: "Jobs" }],
 });
 
 const UserModel = model("User", userSchema);

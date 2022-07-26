@@ -2,6 +2,7 @@ const { Schema, model, default: mongoose, Types } = require("mongoose");
 
 const JobsSchema = new Schema({
   owner: { type: Types.ObjectId, ref: "User" },
+  pilot: { type: Types.ObjectId, ref: "User" },
   title: { type: String, required: true, trim: true, maxLength: 32 },
   description: { type: String, required: true, maxLength: 256 },
   amount: { type: Number, required: true },
@@ -10,7 +11,7 @@ const JobsSchema = new Schema({
     enum: ["Dolar"],
     required: true,
   },
-  requester: { type: String, required: true },
+
   game: {
     type: String,
     enum: ["League of Legends", "Counter Strike", "Dota 2", "Tibia"],
