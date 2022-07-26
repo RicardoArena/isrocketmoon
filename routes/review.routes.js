@@ -17,11 +17,11 @@ router.post(
 
       const { idJob } = req.params;
       console.log(idJob);
-      const currentJob = await JobsModel.findById(idJob);
-      if (currentJob.owner != loggedInUser._id) {
-        return res.status(409).json("Ação Indisponível para o Perfil.");
-      }
-      console.log(currentJob);
+      // const currentJob = await JobsModel.findById(idJob);
+      // if (currentJob !== loggedInUser._id) {
+      //   return res.status(409).json("Ação Indisponível para o Perfil.");
+      // }
+      // console.log(currentJob);
       console.log(loggedInUser);
       const createdReview = await ReviewModel.create({
         ...req.body,
@@ -30,7 +30,7 @@ router.post(
 
       await JobsModel.findOneAndUpdate(
         { _id: idJob },
-        { $push: { review: createdReview._id } }
+        { $push: { reviews: createdReview._id } }
       );
 
       return res.status(201).json(createdReview);
@@ -94,17 +94,21 @@ router.patch("/edit/:idReview", async (req, res) => {
 
 // DELETE
 
-router.delete("/delete/:idReview", async (req, res) => {
+router.delete("/delete/:idJob/:idReview", async (req, res) => {
   try {
     const { idReview } = req.params;
+    const { idJob } = req.params;
+    const loggedInUser = req.currentUser;
+
+    await JobsModel.findOneAndUpdate(
+      { _id: idJob },
+      { $pull: { reviews: idReview } },
+      { runValidators: true, new: true }
+    );
+
     const deletedReview = await ReviewModel.deleteOne({
       _id: idReview,
     });
-
-    const jobs = await JobsModel.findOneAndUpdate(
-      { _id: deletedReview.job },
-      { $pull: { review: deletedReview._id } }
-    );
 
     return res.status(200).json(deletedReview);
   } catch (err) {
