@@ -140,11 +140,29 @@ router.delete(
       //     .status(401)
       //     .json({ message: "Você não pode deletar esse album." });
       // }
+<<<<<<< HEAD
+
+      const deletedJob = await JobsModel.deleteOne({
+        _id: req.params.jobsId,
+      });
+
+      // await ReviewModel.updateMany(
+      //   { jobs: jobsId },
+      //   { $pull: { jobs: jobsId } }
+      // );
+
+      // await UserModel.findOneAndUpdate(
+      //   { _id: loggedInUser._id },
+      //   { $pull: { jobs: jobsId } },
+      //   { runValidators: true }
+      // );
+=======
       await UserModel.findOneAndUpdate(
         { _id: loggedInUser._id },
         { $pull: { jobs: jobsId } },
         { runValidators: true, new: true }
       );
+>>>>>>> 0340a5fbefd6f223740fd2a18343f584ee26ed1d
 
       const deletedJob = await JobsModel.deleteOne({
         _id: jobsId,
