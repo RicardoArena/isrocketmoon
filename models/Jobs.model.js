@@ -9,7 +9,6 @@ const JobsSchema = new Schema({
   currency: {
     type: String,
     enum: ["Dolar"],
-    required: true,
   },
 
   game: {
