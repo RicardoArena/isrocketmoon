@@ -40,7 +40,7 @@ router.get("/myjobs", isAuth, attachCurrentUser, async (req, res) => {
     const userJobs = await JobsModel.find(
       { owner: loggedInUser._id },
       { reviews: 0 }
-    );
+    ).populate("pilot");
 
     return res.status(200).json(userJobs);
   } catch (err) {
@@ -115,9 +115,11 @@ router.patch("/edit/:jobsId", isAuth, attachCurrentUser, async (req, res) => {
 
     const updateJob = await JobsModel.findOneAndUpdate(
       { _id: jobsId },
-      { ...body },
+      { ...req.body },
       { new: true, runValidators: true }
     );
+
+    delete updateJob._doc.passwordHash;
 
     return res.status(200).json(updateJob);
   } catch (err) {
