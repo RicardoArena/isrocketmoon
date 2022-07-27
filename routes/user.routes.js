@@ -71,9 +71,10 @@ router.post("/login", async (req, res) => {
 
 router.get("/profile", isAuth, attachCurrentUser, async (req, res) => {
   const loggedInUser = req.currentUser;
-  const user = await UserModel.find(loggedInUser._id)
-    .populate("testimonials")
-    .populate("reviews");
+  const user = await UserModel.findOne(loggedInUser._id).populate(
+    "testimonials"
+  );
+  // .populate("reviews");
 
   const pilotJobs = await JobsModel.find({ pilot: user._id });
   user.jobs = pilotJobs;
@@ -84,6 +85,7 @@ router.get("/profile", isAuth, attachCurrentUser, async (req, res) => {
 
 router.patch("/update-profile", isAuth, attachCurrentUser, async (req, res) => {
   try {
+    console.log("esse é o req.body", req.body);
     const loggedInUser = req.currentUser;
 
     const updatedUser = await UserModel.findOneAndUpdate(
