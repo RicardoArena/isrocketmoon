@@ -46,7 +46,10 @@ router.post("/login", async (req, res) => {
     const user = await UserModel.findOne({ email: email });
     console.log(user);
     if (!user) {
-      return res.status(400).json({ msg: "This profile is not exist" });
+      return res.status(400).json({ message: "This profile is not exist" });
+    }
+    if (!user.isActive) {
+      return res.status(401).json({ message: "User is not actived." });
     }
 
     if (await bcrypt.compare(password, user.passwordHash)) {
@@ -61,7 +64,7 @@ router.post("/login", async (req, res) => {
         user: { ...user._doc },
       });
     } else {
-      return res.status(400).json({ msg: "Wrong password or email." });
+      return res.status(400).json({ message: "Wrong password or email." });
     }
   } catch (error) {
     console.log(error);
@@ -71,9 +74,16 @@ router.post("/login", async (req, res) => {
 
 router.get("/profile", isAuth, attachCurrentUser, async (req, res) => {
   const loggedInUser = req.currentUser;
-  const user = await UserModel.findOne(loggedInUser._id).populate(
-    "testimonials"
-  );
+  console.log("esse é o logged", loggedInUser);
+  if (loggedInUser.isActive === false) {
+    return res.status(401).json({ message: "User is not actived." });
+  }
+
+  const user = await UserModel.findById(loggedInUser._id);
+  console.log("esse é o user", user);
+  // .populate(
+  //   "testimonials"
+  // );
   // .populate("reviews");
 
   const pilotJobs = await JobsModel.find({ pilot: user._id });
@@ -113,7 +123,13 @@ router.delete(
     try {
       const disabledUser = await UserModel.findOneAndUpdate(
         { _id: req.currentUser._id },
-        { isActive: false, disabledOn: Date.now() },
+        {
+          isActive: false,
+          disabledOn: Date.now(),
+          email: "disable" + Math.random() + "@teste.com",
+          name: "disable" + Math.random(),
+          nickname: "disable" + Math.random(),
+        },
         { runValidators: true, new: true }
       );
 
