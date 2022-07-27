@@ -56,6 +56,10 @@ router.get("/:jobsId", isAuth, attachCurrentUser, async (req, res) => {
     const { jobsId } = req.params;
 
     const foundJobs = await JobsModel.findOne({ _id: jobsId });
+    // .populate("owner")
+    // .populate("pilot");
+    const ownerinfo = await UserModel.find({ _id: foundJobs.owner });
+    foundJobs.ownerinfo = ownerinfo.name;
 
     return res.status(200).json(foundJobs);
   } catch (err) {
