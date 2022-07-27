@@ -15,8 +15,7 @@ const JobsSchema = new Schema({
 
   game: {
     type: String,
-    enum: ["League of Legends", "Counter Strike", "Dota 2", "Tibia"],
-    default: "League of Legends",
+    // enum: ["League of Legends", "Counter Strike", "Dota 2", "Tibia"],
   },
   publishedDate: { type: Date, default: Date.now() },
   updateDate: { type: Date, default: Date.now() },
