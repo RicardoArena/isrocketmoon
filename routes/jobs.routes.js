@@ -49,6 +49,17 @@ router.get("/myjobs", isAuth, attachCurrentUser, async (req, res) => {
   }
 });
 
+router.get("/alljobs", async (req, res) => {
+  try {
+    const allJobs = await JobsModel.find().populate("pilot");
+
+    return res.status(200).json(allJobs);
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json(err);
+  }
+});
+
 router.get("/:jobsId", isAuth, attachCurrentUser, async (req, res) => {
   try {
     // const loggedInUser = req.currentUser;

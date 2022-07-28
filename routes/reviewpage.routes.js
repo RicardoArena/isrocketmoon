@@ -54,6 +54,17 @@ router.get("/my-review-page", isAuth, attachCurrentUser, async (req, res) => {
   }
 });
 
+router.get("/allreviews", async (req, res) => {
+  try {
+    const allReviews = await ReviewModel.find();
+
+    return res.status(200).json(allReviews);
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json(err);
+  }
+});
+
 // READ DETAIL
 router.get("/:reviewId", isAuth, attachCurrentUser, async (req, res) => {
   try {
