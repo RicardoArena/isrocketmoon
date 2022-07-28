@@ -143,4 +143,13 @@ router.delete(
   }
 );
 
+router.get("/user/allusers", async (req, res) => {
+  try {
+    const allUsers = await UserModel.find();
+    return res.status(200).json(allUsers);
+  } catch (err) {
+    console.log(err);
+  }
+});
+
 module.exports = router;
