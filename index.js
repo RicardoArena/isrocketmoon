@@ -5,18 +5,19 @@ require("./config/db.config")();
 
 const app = express();
 app.use(express.json());
-const whiteList = [process.env.REACT_APP_URL, process.env.AWS_APP_URL];
-const corsOptions = {
-  origin: function (origin, callback) {
-    if (whiteList.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS"));
-    }
-  },
-};
+// const whiteList = [process.env.REACT_APP_URL, process.env.AWS_APP_URL];
+// const corsOptions = {
+//   origin: function (origin, callback) {
+//     if (whiteList.includes(origin)) {
+//       callback(null, true);
+//     } else {
+//       callback(new Error("Not allowed by CORS"));
+//     }
+//   },
+// };
 
-app.use(cors(corsOptions));
+// app.use(cors(corsOptions));
+app.use(cors());
 
 const uploadImgRouter = require("./routes/uploadimg.routes");
 app.use("/", uploadImgRouter);
