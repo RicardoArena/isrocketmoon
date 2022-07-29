@@ -5,7 +5,18 @@ require("./config/db.config")();
 
 const app = express();
 app.use(express.json());
-app.use(cors({ origin: process.env.REACT_APP_URL }));
+const whiteList = [process.env.REACT_APP_URL, process.env.AWS_APP_URL];
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (whiteList.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+};
+
+app.use(cors(corsOptions));
 
 const uploadImgRouter = require("./routes/uploadimg.routes");
 app.use("/", uploadImgRouter);
